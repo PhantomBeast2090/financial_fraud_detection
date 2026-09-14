@@ -37,6 +37,13 @@ server_fix.log
 # Uncomment next line if dataset grows large:
 # dataset/transactions.csv
 
+# Test / coverage artefacts
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.pytest_cache/
+
 # OS / IDE
 .DS_Store
 Thumbs.db

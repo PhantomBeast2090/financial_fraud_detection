@@ -90,7 +90,7 @@ def _get_blocked(transaction_id: str, db: Session) -> Transaction:
 def _resolve_alerts(transaction_id: str, username: str, db: Session):
     alerts = db.query(FraudAlert).filter(
         FraudAlert.transaction_id == transaction_id,
-        FraudAlert.is_resolved == False,
+        FraudAlert.is_resolved.is_(False),
     ).all()
     for a in alerts:
         a.is_resolved = True

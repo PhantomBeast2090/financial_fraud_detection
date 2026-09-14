@@ -1,0 +1,364 @@
+{
+  "generated_at": "2026-09-14T15:50:09+00:00",
+  "seed": 42,
+  "dataset": {
+    "path": "dataset/transactions.csv",
+    "rows": 15000,
+    "fraud_rate": 0.1078
+  },
+  "splits": {
+    "strategy": "stratified 64/16/20 train/validation/test (seed 42)",
+    "n_train": 9600,
+    "n_validation": 2400,
+    "n_test": 3000
+  },
+  "features": [
+    "amount",
+    "location",
+    "transaction_type",
+    "time_of_day",
+    "distance_from_home",
+    "device_trust_score",
+    "failed_attempts_24h",
+    "txn_velocity_1h",
+    "merchant_risk_score",
+    "is_international",
+    "card_present",
+    "amount_log",
+    "night_risk",
+    "distance_amount_pressure",
+    "trust_gap",
+    "velocity_pressure",
+    "cross_border_card_not_present"
+  ],
+  "candidates": [
+    {
+      "name": "CalibratedExtraTrees",
+      "classifier": "CalibratedClassifierCV",
+      "params": {
+        "cv": 3,
+        "ensemble": "auto",
+        "estimator__bootstrap": false,
+        "estimator__ccp_alpha": 0.0,
+        "estimator__class_weight": "balanced_subsample",
+        "estimator__criterion": "gini",
+        "estimator__max_depth": null,
+        "estimator__max_features": "sqrt",
+        "estimator__max_leaf_nodes": null,
+        "estimator__max_samples": null,
+        "estimator__min_impurity_decrease": 0.0,
+        "estimator__min_samples_leaf": 2,
+        "estimator__min_samples_split": 2,
+        "estimator__min_weight_fraction_leaf": 0.0,
+        "estimator__monotonic_cst": null,
+        "estimator__n_estimators": 420,
+        "estimator__n_jobs": -1,
+        "estimator__oob_score": false,
+        "estimator__random_state": 42,
+        "estimator__verbose": 0,
+        "estimator__warm_start": false,
+        "estimator": "ExtraTreesClassifier(class_weight='balanced_subsample', min_samples_leaf=2,\n                     n_estimators=420, n_jobs=-1, random_state=42)",
+        "method": "sigmoid",
+        "n_jobs": null
+      }
+    },
+    {
+      "name": "CalibratedRandomForest",
+      "classifier": "CalibratedClassifierCV",
+      "params": {
+        "cv": 3,
+        "ensemble": "auto",
+        "estimator__bootstrap": true,
+        "estimator__ccp_alpha": 0.0,
+        "estimator__class_weight": "balanced_subsample",
+        "estimator__criterion": "gini",
+        "estimator__max_depth": 12,
+        "estimator__max_features": "sqrt",
+        "estimator__max_leaf_nodes": null,
+        "estimator__max_samples": null,
+        "estimator__min_impurity_decrease": 0.0,
+        "estimator__min_samples_leaf": 2,
+        "estimator__min_samples_split": 2,
+        "estimator__min_weight_fraction_leaf": 0.0,
+        "estimator__monotonic_cst": null,
+        "estimator__n_estimators": 300,
+        "estimator__n_jobs": -1,
+        "estimator__oob_score": false,
+        "estimator__random_state": 42,
+        "estimator__verbose": 0,
+        "estimator__warm_start": false,
+        "estimator": "RandomForestClassifier(class_weight='balanced_subsample', max_depth=12,\n                       min_samples_leaf=2, n_estimators=300, n_jobs=-1,\n                       random_state=42)",
+        "method": "sigmoid",
+        "n_jobs": null
+      }
+    },
+    {
+      "name": "BalancedLogisticRegression",
+      "classifier": "LogisticRegression",
+      "params": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 2000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 0.0001,
+        "verbose": 0,
+        "warm_start": false
+      }
+    }
+  ],
+  "artefact": {
+    "model_name": "BalancedLogisticRegression",
+    "model_version": "BalancedLogisticRegression-v2",
+    "trained_at": "2026-05-06T15:04:00Z",
+    "training_rows": 15000
+  },
+  "operating_threshold": 0.78,
+  "validation_recomputed_threshold": 0.78,
+  "threshold_consistent": true,
+  "validation_metrics": {
+    "threshold": 0.78,
+    "n": 2400,
+    "prevalence": 0.10791666666666666,
+    "confusion_matrix": {
+      "tn": 2137,
+      "fp": 4,
+      "fn": 19,
+      "tp": 240
+    },
+    "accuracy": 0.9904166666666666,
+    "precision": 0.9836065573770492,
+    "recall": 0.9266409266409267,
+    "f1": 0.9542743538767395,
+    "roc_auc": 0.9679415854100581,
+    "pr_auc_average_precision": 0.9233249865473996,
+    "false_positive_count": 4,
+    "false_negative_count": 19,
+    "false_positive_rate": 0.0018682858477347033,
+    "false_negative_rate": 0.07335907335907337
+  },
+  "test_metrics": {
+    "threshold": 0.78,
+    "n": 3000,
+    "prevalence": 0.10766666666666666,
+    "confusion_matrix": {
+      "tn": 2669,
+      "fp": 8,
+      "fn": 30,
+      "tp": 293
+    },
+    "accuracy": 0.9873333333333333,
+    "precision": 0.973421926910299,
+    "recall": 0.9071207430340558,
+    "f1": 0.9391025641025641,
+    "roc_auc": 0.953385738621973,
+    "pr_auc_average_precision": 0.9182945621151238,
+    "false_positive_count": 8,
+    "false_negative_count": 30,
+    "false_positive_rate": 0.0029884198729921555,
+    "false_negative_rate": 0.09287925696594428
+  },
+  "threshold_sweep_validation": [
+    {
+      "threshold": 0.3,
+      "precision": 0.933852140077821,
+      "recall": 0.9266409266409267,
+      "f1": 0.9302325581395349,
+      "accuracy": 0.985
+    },
+    {
+      "threshold": 0.35,
+      "precision": 0.9486166007905138,
+      "recall": 0.9266409266409267,
+      "f1": 0.9375,
+      "accuracy": 0.9866666666666667
+    },
+    {
+      "threshold": 0.4,
+      "precision": 0.975609756097561,
+      "recall": 0.9266409266409267,
+      "f1": 0.9504950495049505,
+      "accuracy": 0.9895833333333334
+    },
+    {
+      "threshold": 0.45,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.5,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.55,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.6,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.65,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.7,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.75,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.8,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.85,
+      "precision": 0.9836065573770492,
+      "recall": 0.9266409266409267,
+      "f1": 0.9542743538767395,
+      "accuracy": 0.9904166666666666
+    },
+    {
+      "threshold": 0.9,
+      "precision": 0.9835390946502057,
+      "recall": 0.9227799227799228,
+      "f1": 0.952191235059761,
+      "accuracy": 0.99
+    }
+  ],
+  "permutation_importance": {
+    "method": "sklearn permutation_importance, scoring=average_precision",
+    "n_sample": 800,
+    "n_repeats": 5,
+    "seed": 42,
+    "importances": [
+      {
+        "feature": "amount",
+        "mean": 0.806163197920454,
+        "std": 0.005943048573135196
+      },
+      {
+        "feature": "distance_amount_pressure",
+        "mean": 0.002055374055571324,
+        "std": 0.004143955745024228
+      },
+      {
+        "feature": "device_trust_score",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "failed_attempts_24h",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "txn_velocity_1h",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "merchant_risk_score",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "is_international",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "card_present",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "trust_gap",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "velocity_pressure",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "cross_border_card_not_present",
+        "mean": 0.0,
+        "std": 0.0
+      },
+      {
+        "feature": "night_risk",
+        "mean": -0.00015531353560240823,
+        "std": 0.006250499450842535
+      },
+      {
+        "feature": "transaction_type",
+        "mean": -0.0005901869828744521,
+        "std": 0.0008536061987065688
+      },
+      {
+        "feature": "location",
+        "mean": -0.0012648201617818655,
+        "std": 0.001245761917402786
+      },
+      {
+        "feature": "distance_from_home",
+        "mean": -0.0012945477941242122,
+        "std": 0.0015821994919018032
+      },
+      {
+        "feature": "amount_log",
+        "mean": -0.0037579890465136547,
+        "std": 0.002794278775097251
+      },
+      {
+        "feature": "time_of_day",
+        "mean": -0.009953349205551798,
+        "std": 0.004143186563650442
+      }
+    ]
+  },
+  "library_versions": {
+    "python": "3.14.3",
+    "scikit-learn": "1.8.0",
+    "pandas": "3.0.1",
+    "numpy": "2.4.3"
+  },
+  "notes": [
+    "Threshold selection used validation data only; test set is held out.",
+    "Operating threshold is the artefact's stored threshold, not re-fit on test.",
+    "Dataset is synthetic (see dataset/generate_data.py); metrics do not imply production performance."
+  ]
+}

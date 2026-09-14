@@ -6,7 +6,7 @@ import json
 import uuid
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
@@ -14,13 +14,17 @@ from backend.auth import get_current_user
 from backend.database import get_db
 from backend.model import predict_fraud
 from backend.models_db import FraudAlert, Transaction, User
+from backend.rate_limit import limiter
 from backend.schemas import PredictionOut, TransactionIn, TransactionOut
+from config.settings import settings
 
 router = APIRouter(prefix="/api/transactions", tags=["Transactions"])
 
 
 @router.post("/predict", response_model=PredictionOut, status_code=201)
+@limiter.limit(settings.RATE_LIMIT_PREDICT)
 def create_and_predict(
+    request: Request,
     body: TransactionIn,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -78,6 +82,7 @@ def create_and_predict(
         model_version=result["model_version"],
         reasons=result["reasons"],
         status=status_val,
+        explanation=result.get("explanation"),
     )
 
 

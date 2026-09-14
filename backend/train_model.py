@@ -23,7 +23,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, RobustScaler
 
-from ml_features import CATEGORICAL_COLUMNS, MODEL_FEATURE_COLUMNS, build_feature_frame
+try:
+    from backend.ml_features import CATEGORICAL_COLUMNS, MODEL_FEATURE_COLUMNS, build_feature_frame
+except ModuleNotFoundError:  # allow `python backend/train_model.py` (script mode)
+    from ml_features import CATEGORICAL_COLUMNS, MODEL_FEATURE_COLUMNS, build_feature_frame
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT_DIR / "dataset" / "transactions.csv"

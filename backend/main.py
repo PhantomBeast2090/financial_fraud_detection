@@ -10,9 +10,8 @@ from pathlib import Path
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
 
 # ── Path setup (project root must be importable) ──────────────────────────────
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -21,6 +20,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from config.settings import settings
 from backend.database import Base, engine
+from backend.rate_limit import limiter
 from backend.routers import auth_router, transaction_router, analytics_router, model_router, simulate_router, review_router, db_viewer_router
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -34,15 +34,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger("fraudguard")
 
-# ── Rate Limiter ──────────────────────────────────────────────────────────────
-limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
-
 
 # ── Lifespan (startup / shutdown) ─────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Create DB tables and seed a default admin user on first run."""
+    """Create DB tables and seed bootstrap users on first run."""
     logger.info("🚀 Starting %s v%s ...", settings.APP_NAME, settings.APP_VERSION)
+    settings.warn_if_insecure_defaults()
     Base.metadata.create_all(bind=engine)
     _seed_default_users()
     logger.info("✅ Database tables ready")
@@ -51,29 +49,45 @@ async def lifespan(app: FastAPI):
 
 
 def _seed_default_users():
-    """Create admin + demo user if they don't already exist."""
+    """Create bootstrap users from settings (env-controlled, see .env.example).
+
+    Skipped entirely when SEED_DEFAULT_USERS=false (recommended for prod).
+    With built-in demo defaults + DEBUG=false a loud warning is emitted so
+    operators notice before exposing the instance.
+    """
     from sqlalchemy.orm import Session
     from backend.auth import hash_password
     from backend.models_db import User
 
+    if not settings.SEED_DEFAULT_USERS:
+        logger.info("⏭️  Default-user seeding disabled (SEED_DEFAULT_USERS=false)")
+        return
+
+    if not settings.DEBUG and settings.uses_default_demo_credentials:
+        logger.warning(
+            "⚠️  Seeding bootstrap users with built-in demo credentials. "
+            "Set ADMIN_PASSWORD/DEMO_PASSWORD via environment/.env or "
+            "SEED_DEFAULT_USERS=false before any non-local deployment."
+        )
+
     with Session(engine) as db:
-        if not db.query(User).filter(User.username == "admin").first():
+        if not db.query(User).filter(User.username == settings.ADMIN_USERNAME).first():
             db.add(User(
-                username="admin",
-                email="admin@fraudguard.ai",
-                hashed_password=hash_password("admin123"),
+                username=settings.ADMIN_USERNAME,
+                email=settings.ADMIN_EMAIL,
+                hashed_password=hash_password(settings.ADMIN_PASSWORD),
                 role="admin",
             ))
-            logger.info("🔑 Seeded admin user (admin / admin123)")
+            logger.info("🔑 Seeded admin user (%s)", settings.ADMIN_USERNAME)
 
-        if not db.query(User).filter(User.username == "demo").first():
+        if not db.query(User).filter(User.username == settings.DEMO_USERNAME).first():
             db.add(User(
-                username="demo",
-                email="demo@fraudguard.ai",
-                hashed_password=hash_password("demo1234"),
+                username=settings.DEMO_USERNAME,
+                email=settings.DEMO_EMAIL,
+                hashed_password=hash_password(settings.DEMO_PASSWORD),
                 role="user",
             ))
-            logger.info("🔑 Seeded demo user (demo / demo1234)")
+            logger.info("🔑 Seeded demo user (%s)", settings.DEMO_USERNAME)
 
         db.commit()
 

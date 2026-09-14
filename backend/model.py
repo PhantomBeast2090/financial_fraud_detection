@@ -7,19 +7,34 @@ try:
 except ModuleNotFoundError:
     from ml_features import DEFAULT_TRANSACTION, build_feature_frame, normalize_transaction_payload
 
+try:
+    from backend.explain import explain_transaction
+except ModuleNotFoundError:
+    from explain import explain_transaction
+
 MODEL_PATH = Path(__file__).with_name("model.pkl")
 
 print("Loading fraud detection artifact ...")
-_raw = joblib.load(MODEL_PATH)
 
-# The new train_model.py saves {"model": pipeline, "metadata": {...}}
-# Older pkl files may be a bare sklearn pipeline/estimator.
-if isinstance(_raw, dict) and "model" in _raw:
-    model = _raw["model"]
-    metadata = _raw.get("metadata", {})
-else:
-    model = _raw
-    metadata = {}
+
+def load_model_artifact(path=MODEL_PATH):
+    """Load a model artefact saved by train_model.py.
+
+    Returns (estimator, metadata). Accepts both the current
+    {"model": ..., "metadata": {...}} dict format and older bare
+    estimator pickles. Raises FileNotFoundError / ValueError etc.
+    for missing or corrupt artefacts.
+    """
+    raw = joblib.load(path)
+
+    # The new train_model.py saves {"model": pipeline, "metadata": {...}}
+    # Older pkl files may be a bare sklearn pipeline/estimator.
+    if isinstance(raw, dict) and "model" in raw:
+        return raw["model"], raw.get("metadata", {})
+    return raw, {}
+
+
+model, metadata = load_model_artifact()
 
 
 def predict_fraud(transaction_payload):
@@ -38,6 +53,7 @@ def predict_fraud(transaction_payload):
         "risk_level": risk_level,
         "model_version": metadata.get("model_version", "FraudModel-v2"),
         "reasons": _derive_reasons(transaction, fraud_probability),
+        "explanation": explain_transaction(transaction, fraud_probability, threshold),
         "transaction": transaction,
     }
 

@@ -1,0 +1,40 @@
+# FraudGuard AI CI — lint, tests + coverage, offline evaluation, import check.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies (pinned)
+        # requirements.txt / requirements-dev.txt are == pinned, so this is
+        # the repository's reproducible install path (no lockfile present).
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check backend config tests
+
+      - name: Tests with coverage
+        run: pytest --cov=backend --cov=config --cov-report=term-missing
+
+      - name: Offline evaluation check (no artefacts committed)
+        # Regenerates the evaluation into a temp dir to prove the committed
+        # artefact + dataset reproduce the reported metrics, without dirtying
+        # the repo.
+        run: python -m backend.evaluate --output-dir /tmp/eval-check --no-docs
+
+      - name: Application import check
+        run: python -c "import backend.main; print('app import ok:', backend.main.app.title)"

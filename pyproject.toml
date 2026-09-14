@@ -1,0 +1,30 @@
+[project]
+name = "fraudguard-ai"
+version = "2.0.0"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["backend", "config"]
+omit = ["backend/app.py", "backend/db.py", "*/__pycache__/*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Legacy Flask prototype: frozen, excluded from new-code lint rules.
+"backend/app.py" = ["F401"]
+"backend/db.py" = ["F401"]
+# sys.path bootstrap before project imports is intentional here.
+"backend/main.py" = ["E402"]
+"backend/train_model.py" = ["E402"]
+"backend/evaluate.py" = ["E402"]
+"dataset/generate_data.py" = ["E402"]

@@ -7,13 +7,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from backend.auth import require_admin
 from backend.database import get_db
 from backend.models_db import ModelRun, User
-from backend.schemas import TrainResponse
+from backend.rate_limit import limiter
 from config.settings import settings
 
 router = APIRouter(prefix="/api/model", tags=["Model"])
@@ -82,7 +82,9 @@ def _run_training(db_url_hint: str, trained_by: str):
 
 
 @router.post("/train", response_model=dict)
+@limiter.limit(settings.RATE_LIMIT_TRAIN)
 def trigger_training(
+    request: Request,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     admin: User = Depends(require_admin),

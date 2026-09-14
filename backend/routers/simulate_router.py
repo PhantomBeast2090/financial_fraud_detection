@@ -9,15 +9,16 @@ import random
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
-from sqlalchemy.orm import Session
 
 from backend.auth import get_current_user
 from backend.database import SessionLocal
 from backend.model import predict_fraud
 from backend.models_db import FraudAlert, Transaction, User
+from backend.rate_limit import limiter
 from backend.ml_features import LOCATION_OPTIONS, TRANSACTION_TYPE_OPTIONS
+from config.settings import settings
 
 router = APIRouter(prefix="/api/simulate", tags=["Simulator"])
 
@@ -136,13 +137,15 @@ def _process_and_store(payload: dict) -> dict:
         "label": result["label"],
         "risk_level": result["risk_level"],
         "reasons": result["reasons"],
+        "explanation": result.get("explanation"),
         "status": status_val,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
 
 
 @router.post("/one")
-def simulate_one(current_user: User = Depends(get_current_user)):
+@limiter.limit(settings.RATE_LIMIT_PREDICT)
+def simulate_one(request: Request, current_user: User = Depends(get_current_user)):
     """Generate, analyse, and store one random transaction immediately."""
     payload = _random_transaction()
     return _process_and_store(payload)

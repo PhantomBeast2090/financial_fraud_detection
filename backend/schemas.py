@@ -81,6 +81,7 @@ class PredictionOut(BaseModel):
     model_version: str
     reasons: List[str]
     status: str
+    explanation: Optional[dict] = None
 
 
 class TransactionOut(BaseModel):
