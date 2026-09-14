@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+
+# Env / secrets - never commit
+.env
+.env.*
+!.env.example
+
+# FastAPI / logs
+server.log
+server_fix.log
+*.log
+
+# SQLite - keep schema + setup scripts, ignore live DB
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# ML artefacts - small demo models are tracked intentionally
+# Large experiment artefacts should go to releases / LFS
+!backend/model.pkl
+!backend/encoders.pkl
+!backend/model_metrics.json
+
+# Data - keep generator + sample, ignore large outputs if regenerated
+# dataset/transactions.csv is synthetic and small (520K) - tracked intentionally
+# Uncomment next line if dataset grows large:
+# dataset/transactions.csv
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+.dockerignore
+
+# Node (if frontend tooling added later)
+node_modules/
+dist/

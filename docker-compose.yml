@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./database:/app/database
+      - ./dataset:/app/dataset
+      - ./backend:/app/backend
+    environment:
+      - DEBUG=false
+    restart: unless-stopped
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - api
+    restart: unless-stopped

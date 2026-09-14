@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FraudGuard AI — Financial Intelligence Platform</title>
+  <meta name="description" content="Production-grade ML-powered financial fraud detection with real-time risk scoring and analytics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN PAGE ═══════════════════ -->
+<div id="page-login" class="page active">
+  <div class="login-bg">
+    <div class="login-orb orb1"></div>
+    <div class="login-orb orb2"></div>
+    <div class="login-orb orb3"></div>
+  </div>
+  <div class="login-card glass-card">
+    <div class="login-logo">
+      <div class="logo-icon"><span>FG</span></div>
+      <h1>FraudGuard <span class="accent">AI</span></h1>
+      <p class="login-subtitle">Financial Intelligence Platform</p>
+    </div>
+    <form id="login-form" class="login-form" autocomplete="off">
+      <div class="field-group">
+        <label>Username</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <input id="li-user" type="text" placeholder="admin" value="admin" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input id="li-pass" type="password" placeholder="admin123" value="admin123" />
+        </div>
+      </div>
+      <div id="login-error" class="login-error hidden"></div>
+      <button id="login-btn" type="submit" class="btn-primary btn-full">
+        <span id="login-btn-text">Sign In</span>
+        <div id="login-spinner" class="btn-spinner hidden"></div>
+      </button>
+    </form>
+    <p class="login-hint">Demo: <code>admin / admin123</code> &nbsp;|&nbsp; <code>demo / demo1234</code></p>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP SHELL ═══════════════════ -->
+<div id="app-shell" class="hidden">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon sm"><span>FG</span></div>
+      <span class="sidebar-brand">FraudGuard <span class="accent">AI</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-page="predict" id="nav-predict">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <span>Predict</span>
+      </a>
+      <a href="#" class="nav-item" data-page="analytics" id="nav-analytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Analytics</span>
+      </a>
+      <a href="#" class="nav-item" data-page="alerts" id="nav-alerts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span>Alerts</span>
+        <span class="nav-badge" id="alert-badge">0</span>
+      </a>
+      <a href="#" class="nav-item" data-page="review" id="nav-review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <span>Review Queue</span>
+        <span class="nav-badge nav-badge-orange" id="review-badge">0</span>
+      </a>
+      <a href="#" class="nav-item" data-page="dbviewer" id="nav-dbviewer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span>DB Viewer</span>
+      </a>
+      <a href="#" class="nav-item admin-only" data-page="admin" id="nav-admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Admin</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar"><span id="user-initial">A</span></div>
+        <div class="user-meta">
+          <span id="user-name-display">Admin</span>
+          <span id="user-role-display" class="role-tag">admin</span>
+        </div>
+      </div>
+      <button id="logout-btn" class="btn-icon" title="Logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- ── DASHBOARD PAGE ── -->
+    <section id="page-dashboard" class="content-page active">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Dashboard</h2>
+          <p class="page-subtitle">Real-time fraud intelligence overview</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button id="sim-toggle-btn" class="btn-secondary sim-off">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            <span id="sim-toggle-label">Start Auto-Feed</span>
+          </button>
+          <button id="export-csv-btn" class="btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div class="kpi-body">
+            <span class="kpi-label">Total Transactions</span>
+            <span class="kpi-value" id="kpi-total">—</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="kpi-body">
+            <span class="kpi-label">Fraud Detected</span>
+            <span class="kpi-value" id="kpi-fraud">—</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="kpi-body">
+            <span class="kpi-label">Legitimate</span>
+            <span class="kpi-value" id="kpi-legit">—</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="kpi-body">
+            <span class="kpi-label">Fraud Rate</span>
+            <span class="kpi-value" id="kpi-rate">—</span>
+          </div>
+        </div>
+        <!-- Amount Approved -->
+        <div class="kpi-card">
+          <div class="kpi-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div class="kpi-body">
+            <span class="kpi-label">Amount Approved</span>
+            <span class="kpi-value" id="kpi-amount-approved" style="font-size:1.35rem;color:var(--green)">—</span>
+          </div>
+        </div>
+        <!-- Amount Blocked -->
+        <div class="kpi-card">
+          <div class="kpi-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+          <div class="kpi-body">
+            <span class="kpi-label">Amount Blocked</span>
+            <span class="kpi-value" id="kpi-amount-blocked" style="font-size:1.35rem;color:var(--red)">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Hourly Transaction Trend</h3>
+          <canvas id="chart-hourly" height="200"></canvas>
+        </div>
+        <div class="chart-card small">
+          <h3>Fraud vs Legit</h3>
+          <canvas id="chart-donut" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Live Feed -->
+      <div class="feed-card">
+        <div class="feed-header">
+          <h3>Live Transaction Feed</h3>
+          <div class="live-dot"><span></span>Live</div>
+        </div>
+        <div id="live-feed" class="live-feed"></div>
+      </div>
+    </section>
+
+    <!-- ── PREDICT PAGE ── -->
+    <section id="page-predict" class="content-page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Predict Transaction</h2>
+          <p class="page-subtitle">Submit a transaction for real-time ML fraud analysis</p>
+        </div>
+      </div>
+
+      <div class="predict-layout">
+        <div class="predict-form-card glass-card">
+          <form id="predict-form">
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label>Account ID</label>
+                <input type="number" id="pf-account" value="42" min="1" />
+              </div>
+              <div class="field-group">
+                <label>Amount (₹)</label>
+                <input type="number" id="pf-amount" placeholder="e.g. 45000" step="0.01" />
+              </div>
+              <div class="field-group">
+                <label>Location</label>
+                <select id="pf-location">
+                  <option>Chennai</option><option>Mumbai</option><option>Delhi</option>
+                  <option>Bangalore</option><option>Hyderabad</option><option>Pune</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Transaction Type</label>
+                <select id="pf-type">
+                  <option>Online</option><option>ATM</option><option>POS</option>
+                  <option>UPI</option><option>NEFT</option><option>IMPS</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Hour of Day (0–23)</label>
+                <input type="number" id="pf-time" value="14" min="0" max="23" />
+              </div>
+              <div class="field-group">
+                <label>Distance from Home (km)</label>
+                <input type="number" id="pf-distance" value="12" step="0.1" />
+              </div>
+              <div class="field-group">
+                <label>Device Trust Score (0–100)</label>
+                <input type="number" id="pf-trust" value="78" min="0" max="100" />
+              </div>
+              <div class="field-group">
+                <label>Failed Attempts (24h)</label>
+                <input type="number" id="pf-failed" value="0" min="0" max="20" />
+              </div>
+              <div class="field-group">
+                <label>Txn Velocity (per hour)</label>
+                <input type="number" id="pf-velocity" value="2" min="1" max="25" />
+              </div>
+              <div class="field-group">
+                <label>Merchant Risk Score</label>
+                <input type="number" id="pf-mrisk" value="25" min="0" max="100" step="0.1" />
+              </div>
+              <div class="field-group">
+                <label>International?</label>
+                <select id="pf-intl"><option value="0">No</option><option value="1">Yes</option></select>
+              </div>
+              <div class="field-group">
+                <label>Card Present?</label>
+                <select id="pf-card"><option value="1">Yes</option><option value="0">No</option></select>
+              </div>
+            </div>
+            <button type="submit" id="predict-btn" class="btn-primary btn-full mt-16">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span id="predict-btn-text">Analyze Transaction</span>
+              <div id="predict-spinner" class="btn-spinner hidden"></div>
+            </button>
+          </form>
+        </div>
+
+        <div class="predict-result-panel">
+          <div id="result-placeholder" class="result-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <p>Submit a transaction to see the ML analysis result here.</p>
+          </div>
+          <div id="result-card" class="result-card hidden">
+            <div id="result-verdict" class="result-verdict"></div>
+            <div class="risk-gauge-wrap">
+              <div class="risk-gauge">
+                <canvas id="gauge-canvas" width="220" height="130"></canvas>
+                <div class="gauge-label">
+                  <span id="gauge-pct">0%</span>
+                  <small>Fraud Risk</small>
+                </div>
+              </div>
+            </div>
+            <div id="result-reasons" class="result-reasons"></div>
+            <div class="result-meta">
+              <div class="meta-chip"><span>Model</span><strong id="res-model">—</strong></div>
+              <div class="meta-chip"><span>Status</span><strong id="res-status">—</strong></div>
+              <div class="meta-chip"><span>Risk Level</span><strong id="res-risk">—</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ANALYTICS PAGE ── -->
+    <section id="page-analytics" class="content-page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Analytics</h2>
+          <p class="page-subtitle">Model performance & fraud pattern insights</p>
+        </div>
+      </div>
+
+      <!-- Model metrics -->
+      <div class="metrics-strip" id="metrics-strip">
+        <div class="metric-tile"><span class="mt-label">Accuracy</span><span class="mt-value" id="m-accuracy">—</span></div>
+        <div class="metric-tile"><span class="mt-label">Precision</span><span class="mt-value" id="m-precision">—</span></div>
+        <div class="metric-tile"><span class="mt-label">Recall</span><span class="mt-value" id="m-recall">—</span></div>
+        <div class="metric-tile"><span class="mt-label">F1 Score</span><span class="mt-value" id="m-f1">—</span></div>
+        <div class="metric-tile"><span class="mt-label">ROC-AUC</span><span class="mt-value" id="m-auc">—</span></div>
+        <div class="metric-tile"><span class="mt-label">Threshold</span><span class="mt-value" id="m-threshold">—</span></div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Fraud by Transaction Type</h3>
+          <canvas id="chart-by-type" height="220"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Fraud by Location</h3>
+          <canvas id="chart-by-location" height="220"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card full-width mt-16">
+        <h3>Daily Transaction Volume & Risk (Last 7 Days)</h3>
+        <canvas id="chart-daily" height="160"></canvas>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="chart-card full-width mt-16">
+        <h3>Model Leaderboard (Last Training Run)</h3>
+        <div id="leaderboard-table" class="leaderboard-table"></div>
+      </div>
+    </section>
+
+    <!-- ── ALERTS PAGE ── -->
+    <section id="page-alerts" class="content-page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Fraud Alerts</h2>
+          <p class="page-subtitle">Active risk notifications requiring review</p>
+        </div>
+      </div>
+      <div id="alerts-list" class="alerts-list"></div>
+    </section>
+
+    <!-- ── ADMIN PAGE ── -->
+    <section id="page-admin" class="content-page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Admin Panel</h2>
+          <p class="page-subtitle">Model management & system controls</p>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <div class="admin-card glass-card">
+          <h3>🧠 Model Retraining</h3>
+          <p>Retrain the ML model on the latest synthetic dataset. This runs in the background — poll the status below.</p>
+          <button id="retrain-btn" class="btn-primary mt-16">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15A9 9 0 1118.74 7.64"/></svg>
+            Trigger Retraining
+          </button>
+          <div id="train-status" class="train-status mt-16 hidden"></div>
+        </div>
+
+        <div class="admin-card glass-card">
+          <h3>📊 Current Model Info</h3>
+          <div id="admin-model-info" class="admin-model-info">Loading...</div>
+        </div>
+
+        <div class="admin-card glass-card full-span">
+          <h3>🕒 Training History</h3>
+          <div id="train-history-table" class="leaderboard-table"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── REVIEW QUEUE PAGE ── -->
+    <section id="page-review" class="content-page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Review Queue</h2>
+          <p class="page-subtitle">Flagged transactions awaiting bank staff decision — approve to allow, reject to halt permanently</p>
+        </div>
+        <button id="review-refresh-btn" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15A9 9 0 1118.74 7.64"/></svg>
+          Refresh
+        </button>
+      </div>
+      <div id="review-empty" class="result-placeholder" style="min-height:200px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <p>No flagged transactions pending review.</p>
+      </div>
+      <div id="review-list" class="review-list"></div>
+    </section>
+
+    <!-- ── DB VIEWER PAGE ── -->
+    <section id="page-dbviewer" class="content-page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Database Viewer</h2>
+          <p class="page-subtitle">Browse all tables in <code style="color:var(--accent);background:rgba(0,229,160,.08);padding:2px 8px;border-radius:5px">fraud_detection.db</code> — read-only view</p>
+        </div>
+        <button id="db-refresh-btn" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15A9 9 0 1118.74 7.64"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- Table selector pills -->
+      <div id="db-table-pills" class="db-table-pills"></div>
+
+      <!-- Stats bar -->
+      <div id="db-stats-bar" class="db-stats-bar hidden">
+        <span id="db-stat-table"></span>
+        <span id="db-stat-rows"></span>
+        <span id="db-stat-cols"></span>
+        <div style="flex:1"></div>
+        <div class="db-pagination">
+          <button id="db-prev-btn" class="btn-secondary" style="padding:7px 14px">← Prev</button>
+          <span id="db-page-info" style="font-size:.85rem;color:var(--muted);padding:0 10px"></span>
+          <button id="db-next-btn" class="btn-secondary" style="padding:7px 14px">Next →</button>
+        </div>
+      </div>
+
+      <!-- Data grid -->
+      <div id="db-grid-wrap" class="db-grid-wrap">
+        <div class="result-placeholder" style="min-height:260px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:52px;height:52px;opacity:.25"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <p style="color:var(--muted)">Select a table above to browse its records.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

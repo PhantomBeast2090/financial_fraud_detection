@@ -1,0 +1,81 @@
+{
+  "model_name": "BalancedLogisticRegression",
+  "model_version": "BalancedLogisticRegression-v2",
+  "trained_at": "2026-05-06T15:04:00Z",
+  "threshold": 0.78,
+  "training_rows": 15000,
+  "feature_columns": [
+    "amount",
+    "location",
+    "transaction_type",
+    "time_of_day",
+    "distance_from_home",
+    "device_trust_score",
+    "failed_attempts_24h",
+    "txn_velocity_1h",
+    "merchant_risk_score",
+    "is_international",
+    "card_present",
+    "amount_log",
+    "night_risk",
+    "distance_amount_pressure",
+    "trust_gap",
+    "velocity_pressure",
+    "cross_border_card_not_present"
+  ],
+  "dataset": {
+    "path": "/Users/rakshanadithyaa/Documents/financial_fraud_detection/dataset/transactions.csv",
+    "rows": 15000,
+    "fraud_rate": 0.1078
+  },
+  "validation_leaderboard": [
+    {
+      "name": "BalancedLogisticRegression",
+      "metrics": {
+        "average_precision": 0.9215686584204376,
+        "roc_auc": 0.9625946090215124,
+        "accuracy": 0.9904166666666666,
+        "precision": 0.9836065573770492,
+        "recall": 0.9266409266409267,
+        "f1": 0.9542743538767395,
+        "threshold": 0.78
+      },
+      "score": 0.9385148748125124
+    },
+    {
+      "name": "CalibratedExtraTrees",
+      "metrics": {
+        "average_precision": 0.9206339319526806,
+        "roc_auc": 0.9591880530694169,
+        "accuracy": 0.9904166666666666,
+        "precision": 0.9836065573770492,
+        "recall": 0.9266409266409267,
+        "f1": 0.9542743538767395,
+        "threshold": 0.78
+      },
+      "score": 0.9380942479020218
+    },
+    {
+      "name": "CalibratedRandomForest",
+      "metrics": {
+        "average_precision": 0.9174682139434907,
+        "roc_auc": 0.9632230816256973,
+        "accuracy": 0.9904166666666666,
+        "precision": 0.9836065573770492,
+        "recall": 0.9266409266409267,
+        "f1": 0.9542743538767395,
+        "threshold": 0.78
+      },
+      "score": 0.9366696747978862
+    }
+  ],
+  "test_metrics": {
+    "average_precision": 0.9182945621151238,
+    "roc_auc": 0.953385738621973,
+    "accuracy": 0.9873333333333333,
+    "precision": 0.973421926910299,
+    "recall": 0.9071207430340558,
+    "f1": 0.9391025641025641,
+    "threshold": 0.78
+  }
+}
